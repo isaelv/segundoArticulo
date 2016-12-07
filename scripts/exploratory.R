@@ -20,12 +20,27 @@ y.transf.betareg <- function(y){
 
 late.b.reg <- betareg(y.transf.betareg(recLateSps) ~ lateSps + condition, data = groups.prop)
 earlier.b.reg <- betareg(y.transf.betareg(recEarlierSps) ~ earlierSps + condition, data = groups.prop)
+
 summary(late.b.reg)
 summary(earlier.b.reg)
 
+
+
+
 ##Plotting
+library(RColorBrewer)
 
-plot(recLateSps ~ lateSps, data = groups.prop, col = groups.prop$condition, pch = 3)
-points(recEarlierSps ~ earlierSps, data = groups.prop, pch = 2, col = groups.prop$condition)
+cols <- brewer.pal(n=2, name = "Set1")
+cols1 <- cols[groups.prop$condition]
 
 
+plot(x = groups.prop$lateSps, y = groups.prop$recLateSps, col = cols1, pch = 6, xlab = "Cover proportion of adults", ylab = "Cover proportion of recruits", xlim = c(0, 1))
+
+points(x = groups.prop$earlierSps, y = groups.prop$recEarlierSps, pch = 19, col = cols1)
+
+legend("topright", title = "Grupo funcional", legend = c("Tardias", "Pioneras"), pch = c(6,19))
+
+legend("bottomright", legend = c("Impactado","No impactado"), text.col = rep(cols), bg = "transparent")
+
+lines(groups.prop$earlierSps, predict(earlier.b.reg))
+lines(groups.prop$lateSps, predict(late.b.reg))
