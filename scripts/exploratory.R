@@ -18,6 +18,10 @@ y.transf.betareg <- function(y){
   (y*(n.obs -1) + 0.5)/n.obs
 }
 
+
+
+
+
 late.b.reg <- betareg(y.transf.betareg(recLateSps) ~ lateSps + condition, data = groups.prop)
 earlier.b.reg <- betareg(y.transf.betareg(recEarlierSps) ~ earlierSps + condition, data = groups.prop)
 
@@ -33,7 +37,7 @@ library(RColorBrewer)
 cols <- brewer.pal(n=2, name = "Set1")
 cols1 <- cols[groups.prop$condition]
 
-
+#Untransformed data
 plot(x = groups.prop$lateSps, y = groups.prop$recLateSps, col = cols1, pch = 6, xlab = "Cover proportion of adults", ylab = "Cover proportion of recruits", xlim = c(0, 1))
 
 points(x = groups.prop$earlierSps, y = groups.prop$recEarlierSps, pch = 19, col = cols1)
@@ -42,5 +46,18 @@ legend("topright", title = "Grupo funcional", legend = c("Tardias", "Pioneras"),
 
 legend("bottomright", legend = c("Impactado","No impactado"), text.col = rep(cols), bg = "transparent")
 
-lines(groups.prop$earlierSps, predict(earlier.b.reg))
+lines(groups.prop$earlierSps, predict(earlier.b.reg, type = "response"))
 lines(groups.prop$lateSps, predict(late.b.reg))
+
+#Transformed data
+plot(x = groups.prop$lateSps, y = y.transf.betareg(groups.prop$recLateSps), col = cols1, pch = 6, xlab = "Cover proportion of adults", ylab = "Cover proportion of recruits", xlim = c(0, 1))
+
+points(x = groups.prop$earlierSps, y = y.transf.betareg(groups.prop$recEarlierSps), pch = 19, col = cols1)
+
+legend("topright", title = "Grupo funcional", legend = c("Tardias", "Pioneras"), pch = c(6,19))
+
+legend("bottomright", legend = c("Impactado","No impactado"), text.col = rep(cols), bg = "transparent")
+
+lines(groups.prop$earlierSps, predict(earlier.b.reg, type = "response"))
+lines(groups.prop$lateSps, predict(late.b.reg))
+
