@@ -5,7 +5,7 @@ library(lme4)
 ##Setting WD----
 setwd("~/Dropbox/IVSDoctorado/segundoArticulo")
 
-##Loading required functions
+##Loading required functions----
 
 #Online functions
 HighsstatLibV6.R <- source(file = "http://www.highstat.com/BGS/GLMGLMM/RCode/HighstatLibV6.R")
@@ -21,14 +21,14 @@ head(groups.prop)
 #Data exploration----
 
 groups.prop$lateCoral <- groups.prop$lateSpsProp + groups.prop$lateSpsRecProp
-
+groups.prop$earlierCoral <- groups.prop$earlierSpsProp + groups.prop$earlierSpsRecProp
 
 #Outliers
 
-MyVars <- c("seaUrchins", 
-            "lateCoral", 
-            "earlierSpsProp", 
-            "earlierSpsRecProp",
+MyVars <- c("earlierCoral",
+            "lateCoral",
+            "semester",
+            "condition",
             "nonStbAlgaeProp",
             "stblAlgaeProp",
             "otherGroupsProp")
@@ -46,7 +46,7 @@ groups.prop$fsquare <- factor(groups.prop$square)
 #Reviewing collinearity
 #otherGroupsProp removed due to high collinearity and the undefined effect on the recruitment stablishment.
 
-corvif(groups.prop[,c("fsemester", "fcondition","seaUrchins", "lateCoral","earlierSpsProp","earlierSpsRecProp","stblAlgaeProp","nonStbAlgaeProp")])
+corvif(groups.prop[,c("fsemester", "fcondition","stblAlgaeProp","nonStbAlgaeProp", "otherGroupsProp")])
 
 
 #Determining singletons
@@ -70,11 +70,14 @@ bGroups$cNonStbAlgaeProp<- MyNorm(bGroups$nonStbAlgaeProp)
 bGroups$cNonStbAlgaeProp<- MyNorm(bGroups$nonStbAlgaeProp)
 bGroups$cStbAlgaeProp<- MyNorm(bGroups$stblAlgaeProp)
 
+#Beta GLMM in JAGS----
+#Preraring data
+N <- nrow(bGroups)
+bGroups$earlierCoralTrans <- (bGroups$earlierCoral * (N - 1) + 0.5) / N
+bGroups$lateCoralTrans <- (bGroups$lateCoral * (N - 1) + 0.5) / N
 
-
-
-
-
+#The covariate matrix (X)
+X <- model.matrix(~ fsemester + fcondition + cNonStbAlgaeProp + cStbAlgaeProp ,data = bGroups)
 
 ####Beta regression----
 ##Transformation function since beta has open interval (0,1). From betareg vignette

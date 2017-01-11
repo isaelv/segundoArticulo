@@ -40,4 +40,6 @@ nonCoralProp1 <- y.transf.betareg(m1Data$nonCoralProp)
 
 m1 <- betareg(c(coralProp1,nonCoralProp1) ~ condition + square, data = m1Data)
 
+##Beta GLMM using JAGS
+
 
