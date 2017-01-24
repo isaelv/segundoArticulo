@@ -5,6 +5,9 @@ library(lme4)
 ##Setting WD----
 setwd("~/Dropbox/IVSDoctorado/segundoArticulo")
 
+##Setting WD on JOServer
+setwd("C:/Users/Isael.WIN-1QSDVEKUF24/Desktop/segundoArticulo")
+
 ##Loading required functions----
 
 #Online functions
@@ -28,6 +31,7 @@ groups.prop$earlierCoral <- groups.prop$earlierSpsProp + groups.prop$earlierSpsR
 MyVars <- c("earlierCoral",
             "lateCoral",
             "semester",
+            "seaUrchins",
             "condition",
             "nonStbAlgaeProp",
             "stblAlgaeProp",
@@ -44,7 +48,7 @@ groups.prop$fcondition <- factor(groups.prop$condition)
 #Reviewing collinearity
 #otherGroupsProp removed due to high collinearity and the undefined effect on the recruitment stablishment.
 
-corvif(groups.prop[,c("fsemester", "fcondition","stblAlgaeProp","nonStbAlgaeProp", "otherGroupsProp")])
+corvif(groups.prop[,c("fsemester", "fcondition","stblAlgaeProp","seaUrchins","nonStbAlgaeProp", "otherGroupsProp")])
 
 
 #Determining singletons
@@ -162,19 +166,19 @@ params <- c("beta", "a", "sigma", "theta", "PRes", "Fit","FitNew")
 
 load.module("glm")
 
-J0 <- jags.parallel(
+J60 <- jags.parallel(
   data = win.data,
   inits = inits,
   parameters = params,
   model.file = "models/lateCoralsBetaGLMM.txt",
   n.thin = 10,
-  n.chains = 3,
-  n.cluster = 3,
+  n.chains = 60,
+  n.cluster = 60,
   n.burnin = 400000,
   n.iter = 500000
 )
 
-out <- J0$BUGSoutput
+out <- J60$BUGSoutput
 OUT1 <- MyBUGSOutput(out, c(uNames("beta", K), "sigma", "theta"))
 print(OUT1, digits = 3)
 
@@ -189,15 +193,22 @@ vars <- c("beta[1]",
           "beta[8]"
           )
 
-MyBUGSChains(J0$BUGSoutput, vars)
+MyBUGSChains(J60$BUGSoutput, vars)
 
 options(max.print = 100000)
 
-print(J0, intervals = c(0.025, 0.975), digits = 3)
+print(J60, intervals = c(0.025, 0.975), digits = 3)
 
 
 #Deviance----
 out$mean$deviance
+
+
+
+
+
+
+
 
 
 
