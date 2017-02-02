@@ -104,7 +104,7 @@ win.data <- list(Y = bGroups$lateCoralTrans,
 
 #JAGS model code for Beta GLMM for lateCoralsTrans
 
-sink("models/lateCoralsBetaGLMM.txt")
+sink("lateCoralsBetaGLMMJ03.txt")
 cat("
     model{
     #1A. Diffuse normal priors for betas
@@ -166,21 +166,45 @@ params <- c("beta", "a", "sigma", "theta", "PRes", "Fit","FitNew")
 
 load.module("glm")
 
+
+#Test model
+J03 <- jags.parallel(
+  data = win.data,
+  inits = inits,
+  parameters = params,
+  model.file = "lateCoralsBetaGLMMJ03.txt",
+  n.thin = 10,
+  n.chains = 3,
+  n.cluster = 3,
+  n.burnin = 10000,
+  n.iter = 15000,
+  working.directory = "C:/Users/Isael.WIN-1QSDVEKUF24/Desktop/segundoArticulo"
+)
+
+out <- J03$BUGSoutput
+OUT1 <- MyBUGSOutput(out, c(uNames("beta", K), "sigma", "theta"))
+print(OUT1, digits = 3)
+
+
+##Updated model
+
 J60 <- jags.parallel(
   data = win.data,
   inits = inits,
   parameters = params,
-  model.file = "models/lateCoralsBetaGLMM.txt",
+  model.file = "lateCoralsBetaGLMMJ03.txt",
   n.thin = 10,
   n.chains = 60,
   n.cluster = 60,
-  n.burnin = 400000,
-  n.iter = 500000
+  n.burnin = 100000,
+  n.iter = 500000,
+  working.directory = "C:/Users/Isael.WIN-1QSDVEKUF24/Desktop/segundoArticulo"
 )
 
 out <- J60$BUGSoutput
 OUT1 <- MyBUGSOutput(out, c(uNames("beta", K), "sigma", "theta"))
 print(OUT1, digits = 3)
+
 
 #Assesing mixing of chains
 vars <- c("beta[1]",
