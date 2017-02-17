@@ -76,6 +76,7 @@ bGroups$cOtherGroupsProp <- MyNorm(bGroups$otherGroupsProp)
 
 #Beta GLMM in JAGS----
 #Preraring data
+
 N <- nrow(bGroups)
 bGroups$earlierCoralTrans <- (bGroups$earlierCoral * (N - 1) + 0.5) / N
 bGroups$lateCoralTrans <- (bGroups$lateCoral * (N - 1) + 0.5) / N
